@@ -103,3 +103,5 @@ theme: butterfly
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+  repository: git@github.com:Happy-Feet-hhh/Happy-Feet-hhh.github.io.git
+  branch: master
