@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>solidjs Router简明教程(持续更新中....) | Gridea</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://happy-feet-hhh.github.io/favicon.ico?v=1713882390986">
+<link rel="stylesheet" href="https://happy-feet-hhh.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="路由管理相关
+这段时间一直在捣鼓solidjs这个框架，这是一个性能非常之高的框架，而且十分新潮。但由于鄙人没有什么前端经验，上手前端的时候没有选择vue这种框架(全靠自己摸索，查文档)，前端开发很多的东西都不知道。比如路由管理。。。 所以..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://happy-feet-hhh.github.io">
+        <img src="https://happy-feet-hhh.github.io/images/avatar.png?v=1713882390986" class="site-logo">
+        <h1 class="site-title">Gridea</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://happy-feet-hhh.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">solidjs Router简明教程(持续更新中....)</h2>
+            <div class="post-date">2024-04-22</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="路由管理相关">路由管理相关</h2>
+<p>这段时间一直在捣鼓solidjs这个框架，这是一个性能非常之高的框架，而且十分新潮。但由于鄙人没有什么前端经验，上手前端的时候没有选择vue这种框架(全靠自己摸索，查文档)，前端开发很多的东西都不知道。比如路由管理。。。 所以在写项目的时候一直很难受。</p>
+<p>所幸，在逛solidjs 新的 文档网站的时候，发现了这个 solidjs/router， 感觉思路一下打开了。<br>
+<img src="https://happy-feet-hhh.github.io/post-images/1713791650299.png" alt="" loading="lazy"></p>
+<p>我之前还在好奇，如果前后端分离的话,那么前端的路由管理到底是谁在做呢？还是由之前的后端框架 Axum 来做吗？明明Axum端只负责通过路由传递数据啊。</p>
+<p>但事实是，确实，前后端都有路由，甚至前端要部署在一个服务器上，后端自己就是服务器程序。（也就是说整个项目需要两个服务器，难道这就是前后端分离，不知道我理解的对不对）<br>
+<strong>前端的路由管路并不会向后端服务器发送请求，始终只有一个html页面，变化的只是组件树上的组件</strong><br>
+<img src="https://happy-feet-hhh.github.io/post-images/1713791537386.png" alt="" loading="lazy"></p>
+<h2 id="安装solidjs-router">安装solidjs router</h2>
+<p>在项目目录中打开终端，输入：<br>
+<code>bun install @solidjs/router</code> (没错，包管理和运行时也是用的Bun)，然后就可以在项目里面管理路由了。</p>
+<h2 id="示例提供根级布局添加路由">示例：提供根级布局&amp;添加路由</h2>
+<p>我们需要在<code>render</code>函数中渲染 <code>Router</code>组件，并且指定根布局，下面是示例代码：</p>
+<pre><code class="language-typescript">// index.tsx
+iimport { render } from 'solid-js/web';
+import { Router, Route } from '@solidjs/router';
+import App from './App';
+
+import Home from './pages/home';
+import User from './pages/users';
+import NotFound from &quot;./pages/notFound&quot;;
+
+render(
+    () =&gt; (
+    &lt;Router root={App}&gt;
+        &lt;Route path=&quot;/&quot; component={Home} /&gt;
+        &lt;Route path=&quot;/user&quot; component={User} /&gt;
+        &lt;Route path=&quot;*paramName&quot; component={NotFound} /&gt;
+    &lt;/Router&gt;
+    ),
+    document.getElementById('root')!
+);
+</code></pre>
+<p>通过 <code>@solidjs/router</code>引入 <code>Router</code>，然后我们在 <code>render</code>函数中，将 <code>Router</code>组件作为第一个参数传入，并且指定 <code>RouterProps.root = App</code>，这样就指定了根路由组件为APP。同时，在<code>Router</code>组件中添加 <code>Route</code>组件来指定子路由。</p>
+<p><code>RouterProps</code>的定义如下：<br>
+<img src="https://happy-feet-hhh.github.io/post-images/1713792221009.png" alt="" loading="lazy"></p>
+<p>-------------------------------------------------------------------------------------分割线<br>
+APP组件也指定了 接受子路由 的props。同时引入了 <code>&lt;A&gt;</code>，它可以让我们使用本机锚点标记(即 './'这样的相对路径，我猜的，谁知道呢？)，使用起来跟一般的 a标签没什么两样。<br>
+App组件的代码如下：</p>
+<pre><code class="language-typescript">// App.tsx
+import { createSignal, onMount } from &quot;solid-js&quot;;
+import { A } from &quot;@solidjs/router&quot;;
+
+interface RootProps {
+  children: any;
+}
+
+const App = (props: RootProps) =&gt; {
+
+  return (
+    &lt;&gt;
+      &lt;nav&gt;
+        &lt;A href=&quot;/&quot;&gt;Home&lt;/A&gt;
+        &lt;A href=&quot;/user&quot;&gt;Users&lt;/A&gt;
+      &lt;/nav&gt;
+      &lt;h1&gt;Site Title&lt;/h1&gt;
+      {props.children}
+    &lt;/&gt;
+  );
+}
+
+export default App;
+
+</code></pre>
+<h3 id="效果展示">效果展示</h3>
+<p>现在我们打开网页，输入不同的url(别在意细节)，然后看看效果，发现确实实现了路由的变化。<br>
+<img src="https://happy-feet-hhh.github.io/post-images/1713794218697.png" alt="" loading="lazy"><br>
+不过我们发现无论我们在什么页面，最上方的 Site Title 一直存在，这是因为我们在<strong>标题和超链接 我们直接渲染在根组件的，就算切换子路由也不会消失</strong>。（当然你可以改变写法）<br>
+<img src="https://happy-feet-hhh.github.io/post-images/1713794388513.png" alt="" loading="lazy"></p>
+<h2 id="懒加载">懒加载</h2>
+<p>将顶部的import替换为 <code>solidjs</code>提供的 <code>lazy</code>函数可以实现，将组件的加载推迟到导航到该组件的时候。<br>
+删除import组件的相关语句<br>
+<s>import Home from './pages/home';</s><br>
+<s>import User from './pages/users';</s><br>
+替换为：</p>
+<pre><code class="language-typescript">// index.tsx
+import { lazy } from 'solid-js';
+// .... 其余的代码
+const Users = lazy(() =&gt; import(&quot;./pages/users&quot;));
+const Home = lazy(() =&gt; import(&quot;./pages/home&quot;));
+</code></pre>
+<h2 id="动态路由路径参数">动态路由（路径参数）</h2>
+<p>如果路径事先未知，则可以将部分路径视为灵活参数。</p>
+<pre><code class="language-typescript">import { lazy } from &quot;solid-js&quot;;
+import { render } from &quot;solid-js/web&quot;;
+import { Router, Route } from &quot;@solidjs/router&quot;;
+
+const Users = lazy(() =&gt; import(&quot;./pages/Users&quot;));
+const User = lazy(() =&gt; import(&quot;./pages/User&quot;));
+const Home = lazy(() =&gt; import(&quot;./pages/Home&quot;));
+
+render(() =&gt; (
+  &lt;Router&gt;
+    &lt;Route path=&quot;/users&quot; component={Users} /&gt;
+    &lt;Route path=&quot;/users/:id&quot; component={User} /&gt;      /* /user/:id 便是路径参数 */
+    &lt;Route path=&quot;/&quot; component={Home} /&gt;
+  &lt;/Router&gt;
+ ), document.getElementById(&quot;root&quot;));
+</code></pre>
+<p>冒号表示可以 id 是任何字符串，只要 URL 符合该模式， <User> 就会显示组件。然后我们在相应的组件中使用 <code>useParams</code> 函数便可以访问参数。</p>
+<pre><code class="language-typescript">import { useParams } from &quot;@solidjs/router&quot;;
+
+const User = () =&gt; {
+  const params = useParams(); // Retrieve the dynamic route parameters
+  // Now you can access the id parameter as params.id
+
+  return (
+    &lt;p&gt;
+      This is the user with the id of &lt;code&gt;{params.id}&lt;/code&gt;
+    &lt;/p&gt;
+  );
+};
+</code></pre>
+<h3 id="一个示例">一个示例</h3>
+<pre><code class="language-typescript">import { createResource } from &quot;solid-js&quot;;
+import { useParams } from &quot;@solidjs/router&quot;;
+
+async function fetchUser(id) {
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/users/${id}`
+  );
+  return response.json();
+}
+
+const User = () =&gt; {
+  const params = useParams();
+  const [data] = createResource(params.id, fetchUser); // Pass the id parameter to createResource
+
+  return (
+    &lt;div&gt;
+      &lt;Show when={!data.loading} fallback={&lt;p&gt;Loading...&lt;/p&gt;}&gt;
+        &lt;div&gt;
+          &lt;p&gt;Name: {data().name}&lt;/p&gt;
+          &lt;p&gt;Email: {data().email}&lt;/p&gt;
+          &lt;p&gt;Phone: {data().phone}&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/Show&gt;
+    &lt;/div&gt;
+  );
+};
+</code></pre>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://happy-feet-hhh.github.io/post/shi-yong-gridea-yu-github-da-jian-zi-ji-de-bo-ke/">
+                  <h3 class="post-title">
+                    使用Gridea与Github搭建自己的博客
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
